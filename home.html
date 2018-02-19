@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">    
+    <style>
+        #map {
+            width: 100%;
+            height: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form id="search_form">
+            <input type="text" placeholder="Enter your area" class="form-control" id="search_input"><br />
+            <button class="btn btn-success" id="search_btn">Search</button>
+        </form><br />
+        <div id="map"></div>
+    </div>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    let searchForm = document.getElementById('search_btn');
+    searchForm.addEventListener('click', myFun);
+    function myFun(e) {
+        e.preventDefault();
+        let location = document.getElementById('search_input').value;
+        axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
+            params: {
+                address: location,
+                key: 'AIzaSyA6SVuZPRAjUm-d4iCEQMSwr033cfSg1pE'
+            }
+        })
+        .then((response) => {
+            console.log(response);
+            var lat = parseFloat(response.data.results[0].geometry.location.lat);
+            var lng = parseFloat(response.data.results[0].geometry.location.lng);
+            initMap(lat, lng);
+        })
+    }
+
+    function initMap(x, y) {
+        let map = new google.maps.Map(document.getElementById('map'), {
+            center: {
+                lat: parseFloat(x),
+                lng: parseFloat(y)
+            },
+            zoom: 12
+            });
+            let marker = new google.maps.Marker({
+                position: {
+                    lat: parseFloat(x),
+                    lng: parseFloat(y)
+                },
+                map: map
+            });
+    }
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=Your_API_key&callback=initMap"
+async defer></script>
+</body>
+</html>
